@@ -1,0 +1,49 @@
+# Android
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.jks
+
+# Logs
+*.log
+build_output.txt
+build_error.txt
+log.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project images (maybe keep screen.png?)
+overlap_check.png
+panel_gap*.png
+picker_collision.png
+polish_check.png
+xx.jpg
+
+# Signing Keys
+release-key.jks
+keystore.properties
+
+build_log.txt
+
+com.imi.smartedge.sidebar.panel.yml
+
+source_log.txt
+
+# Session Artifacts
+build_out.txt
+commit_msg.txt
+dev_yml_content.txt
+icon_issue.png
+keytool_output.txt
+screenshot*.png
+FDROID_SETUP_HISTORY.md
+GEMINI.md

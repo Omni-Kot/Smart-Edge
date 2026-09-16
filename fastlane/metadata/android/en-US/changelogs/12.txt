@@ -1,0 +1,10 @@
+- Added 'Long Press' gesture support to the edge handle.
+- Restored 'Slide' as default animation style.
+- Added Animation Style selection to settings.
+- Fixed sidebar always sliding in Popup mode.
+- Fixed false Accessibility Required warnings with Shizuku.
+- Unified animation logic for panels & pickers.
+- Added search to all App Selectors.
+- Modernized Icon Pack selection UI.
+- Native Gesture Engine with split-screen support.
+- Improved swipe responsiveness & sensitivity.

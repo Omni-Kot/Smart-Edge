@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SidePanel" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- For the App Picker activity -->
+    <style name="Theme.SidePanel.AppPicker" parent="Theme.SidePanel">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="Widget.App.Slider" parent="Widget.Material3.Slider">
+        <item name="trackHeight">22dp</item>
+        <item name="thumbRadius">11dp</item>
+        <item name="thumbColor">?attr/colorPrimary</item>
+        <item name="trackColorInactive">?attr/colorSurfaceContainerHighest</item>
+        <item name="trackColorActive">?attr/colorPrimary</item>
+        <item name="thumbElevation">0dp</item>
+        <item name="haloColor">@android:color/transparent</item>
+        <item name="haloRadius">0dp</item>
+    </style>
+</resources>

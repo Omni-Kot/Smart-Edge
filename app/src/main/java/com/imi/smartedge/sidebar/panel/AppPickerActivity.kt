@@ -1,0 +1,169 @@
+package com.imi.smartedge.sidebar.panel
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.imi.smartedge.sidebar.panel.databinding.ActivityAppPickerM3Binding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+/**
+ * Full-screen activity to add/remove apps from the side panel.
+ * Opens from MainActivity → "Manage Apps" button.
+ * Changes are saved to PanelPreferences immediately on checkbox toggle.
+ */
+class AppPickerActivity : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
+    private lateinit var binding: ActivityAppPickerM3Binding
+    private lateinit var panelPrefs: PanelPreferences
+    private lateinit var pickerAdapter: AppPickerAdapter
+    private var allApps: List<AppInfo> = emptyList()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityAppPickerM3Binding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        panelPrefs = PanelPreferences(this)
+
+        // Setup toolbar
+        supportActionBar?.apply {
+            title = getString(R.string.app_picker_title)
+            setDisplayHomeAsUpEnabled(true)
+        }
+
+        pickerAdapter = AppPickerAdapter { app, isChecked ->
+            if (isChecked) panelPrefs.addApp(app.identifier)
+            else panelPrefs.removeApp(app.identifier)
+        }
+
+        binding.rvAllApps.apply {
+            layoutManager = LinearLayoutManager(this@AppPickerActivity)
+            adapter = pickerAdapter
+        }
+
+        // Search
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterApps(newText.orEmpty())
+                return true
+            }
+        })
+
+        binding.btnDone.setOnClickListener { finish() }
+
+        loadApps()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Force rebind so Glide picks up new icon pack if it changed
+        if (::pickerAdapter.isInitialized) {
+            pickerAdapter.notifyItemRangeChanged(0, pickerAdapter.itemCount)
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
+    }
+
+    private fun loadApps() {
+        lifecycleScope.launch {
+            val apps = withContext(Dispatchers.IO) {
+                AppRepository(this@AppPickerActivity).getAllApps()
+            }
+            allApps = apps
+            pickerAdapter.submitList(apps)
+        }
+    }
+
+    private fun filterApps(query: String) {
+        val filtered = if (query.isBlank()) allApps
+        else allApps.filter { it.appName.contains(query, ignoreCase = true) }
+        pickerAdapter.submitList(filtered)
+    }
+
+    // ── Inner Adapter ────────────────────────────────────────────────────────
+
+    inner class AppPickerAdapter(
+        private val onToggle: (AppInfo, Boolean) -> Unit
+    ) : ListAdapter<AppInfo, AppPickerAdapter.PickerViewHolder>(Diff) {
+
+        inner class PickerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val ivIcon: ImageView = itemView.findViewById(R.id.ivPickerIcon)
+            val tvName: TextView = itemView.findViewById(R.id.tvPickerName)
+            val cbInPanel: CheckBox = itemView.findViewById(R.id.cbInPanel)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            PickerViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_app_picker_m3, parent, false)
+            )
+
+        override fun onBindViewHolder(holder: PickerViewHolder, position: Int) {
+            val app = getItem(position)
+            
+            val scale = panelPrefs.scaleFactor
+            val baseIconSize = 44
+            val baseTextSize = 14f
+
+            holder.ivIcon.layoutParams.let { lp ->
+                lp.width = (resources.displayMetrics.density * baseIconSize * scale).toInt()
+                lp.height = (resources.displayMetrics.density * baseIconSize * scale).toInt()
+                holder.ivIcon.layoutParams = lp
+            }
+            holder.tvName.textSize = baseTextSize * scale
+            
+            // --- OPTIMIZED ICON LOADING WITH GLIDE ---
+            Glide.with(this@AppPickerActivity).clear(holder.ivIcon)
+            Glide.with(this@AppPickerActivity)
+                .load(AppIconRequest(app.packageName, panelPrefs.appearanceKey))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(android.R.drawable.sym_def_app_icon)
+                .error(android.R.drawable.sym_def_app_icon)
+                .override((120 * scale).toInt(), (120 * scale).toInt())
+                .into(holder.ivIcon)
+            IconShapeHelper.applyShape(holder.ivIcon, panelPrefs.iconShape)
+
+            holder.tvName.text = app.appName
+
+            // Reset listener before setting checked (avoid spurious callbacks)
+            holder.cbInPanel.setOnCheckedChangeListener(null)
+            holder.cbInPanel.isChecked = panelPrefs.isInPanel(app.identifier)
+            holder.cbInPanel.setOnCheckedChangeListener { _, checked ->
+                onToggle(app, checked)
+            }
+
+            holder.itemView.setOnClickListener {
+                holder.cbInPanel.toggle()
+            }
+        }
+    }
+}
+
+private object Diff : DiffUtil.ItemCallback<AppInfo>() {
+    override fun areItemsTheSame(o: AppInfo, n: AppInfo) = o.identifier == n.identifier
+    override fun areContentsTheSame(o: AppInfo, n: AppInfo) = o.appName == n.appName
+}

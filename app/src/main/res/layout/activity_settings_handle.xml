@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="0dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/section_handle"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="?attr/colorOnSurface" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:id="@+id/handleScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/app_screen_padding">
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/App_Card_Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    style="@style/App_CardContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/feature_show_pill" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/visible_pill" android:textColor="?attr/colorOnSurface" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/visible_pill_desc" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" />
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutlineVariant" android:layout_marginVertical="16dp" />
+
+                    <LinearLayout android:id="@+id/feature_pill_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/pill_color" android:textColor="?attr/colorOnSurface" />
+                        <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetPillColor" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPickPillColor"
+                            style="@style/App_Button_Tonal"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay_App_Corner50"
+                            app:icon="@drawable/ic_color_picker_custom"
+                            app:iconTint="?attr/colorOnPrimary"
+                            app:iconGravity="textStart"
+                            android:padding="0dp"
+                            app:iconPadding="0dp" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_thickness" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/pill_thickness" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetThickness" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvThicknessValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_2dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbPillThickness" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="1.0" android:valueTo="10.0" android:value="2.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_trigger_width" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/touch_area_width" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetWidth" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvWidthValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_15dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbTriggerWidth" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="5.0" android:valueTo="50.0" android:value="15.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_handle_height" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/handle_height" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetHeight" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvHeightValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_150dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbHandleHeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="50.0" android:valueTo="400.0" android:value="150.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_vpos" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/ui_vertical_position" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetPos" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvPosValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_0dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbHandlePos" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="-500.0" android:valueTo="500.0" android:value="0.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,64 @@
+name: Build and Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > app/release.keystore
+
+      - name: Create keystore.properties
+        run: |
+          echo "KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" > keystore.properties
+          echo "KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> keystore.properties
+          echo "STORE_FILE=release.keystore" >> keystore.properties
+          echo "STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> keystore.properties
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Extract Changelog
+        id: changelog
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          # Extract everything between current tag header and the next separator
+          # Usage: awk '/### v1.2.1/,/---/' CHANGELOG.md
+          {
+            echo 'body<<EOF'
+            # Find the line matching the version, print until the next '---' or end of file
+            awk "/### ${TAG_NAME}/ {flag=1; next} /---/ {flag=0} flag" CHANGELOG.md
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app/build/outputs/apk/release/app-release.apk
+          body: ${{ steps.changelog.outputs.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

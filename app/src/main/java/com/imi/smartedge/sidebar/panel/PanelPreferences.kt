@@ -1,0 +1,763 @@
+package com.imi.smartedge.sidebar.panel
+
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import androidx.core.content.edit
+
+/**
+ * Manages the persistent list of apps pinned to the side panel,
+ * and other panel settings, using SharedPreferences.
+ */
+class PanelPreferences(context: Context) {
+
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    companion object {
+        private const val PREFS_NAME = "side_panel_prefs"
+        private const val KEY_PANEL_APPS = "panel_apps"
+        private const val KEY_PANEL_SIDE = "panel_side"
+        private const val KEY_AUTO_START = "auto_start"
+        private const val KEY_SHOW_PILL = "show_pill"
+        private const val KEY_HAPTIC_ENABLED = "haptic_enabled"
+        private const val KEY_PANEL_OPACITY = "panel_opacity"
+        private const val KEY_HANDLE_HEIGHT = "handle_height"
+        private const val KEY_HANDLE_WIDTH = "handle_width"
+        private const val KEY_HANDLE_OFFSET = "handle_offset"
+        private const val KEY_ACCENT_COLOR = "accent_color"
+        private const val KEY_USE_CUSTOM_ACCENT = "use_custom_accent"
+        private const val KEY_PANEL_COLUMNS = "panel_columns"
+        private const val KEY_UI_THEME = "ui_theme"
+
+        private const val KEY_PANEL_RADIUS = "panel_radius"
+        private const val KEY_PANEL_BG_COLOR = "panel_bg_color"
+        private const val KEY_HIDE_BG = "hide_bg"
+        private const val KEY_SHOW_TOOLS = "show_tools"
+        private const val KEY_ICON_SHAPE = "icon_shape"
+        private const val KEY_GESTURES_ENABLED = "gestures_enabled"
+        private const val KEY_SHOW_IN_LANDSCAPE = "show_in_landscape"
+        private const val KEY_THEME_MODE = "theme_mode"
+
+        private const val KEY_PILL_WIDTH = "pill_width"
+        private const val KEY_PILL_COLOR = "pill_color"
+        private const val KEY_TAP_TO_OPEN = "tap_to_open"
+        private const val KEY_DOUBLE_TAP_TO_OPEN = "double_tap_to_open"
+        private const val KEY_TRIPLE_TAP_TO_OPEN = "triple_tap_to_open"
+        private const val KEY_ICON_PACK = "selected_icon_pack"
+        private const val KEY_ICON_PACK_LABEL = "selected_icon_pack_label"
+        private const val KEY_BLUR_ENABLED = "blur_enabled"
+        private const val KEY_BLUR_AMOUNT = "blur_amount"
+        private const val KEY_SHOW_LOGS = "show_logs"
+        private const val KEY_ANIM_SPEED = "animation_speed"
+        private const val KEY_PICKER_ANIM_TYPE = "picker_anim_type"
+        private const val KEY_PICKER_GAP = "picker_gap"
+        private const val KEY_SHOW_SYS_INFO = "show_sys_info"
+        private const val KEY_SHOW_SCREENSHOT_TOOL = "show_screenshot_tool"
+        private const val KEY_SHOW_TOOLS_PANEL_BUTTON = "show_tools_panel_button"
+        private const val KEY_SHOW_POWER_MENU = "show_power_menu"
+        private const val KEY_SHOW_VOLUME_KEYS = "show_volume_keys"
+        private const val KEY_SHOW_BRIGHTNESS_KEYS = "show_brightness_keys"
+        private const val KEY_HOME_BUTTON_STYLE = "home_button_style"
+        private const val KEY_FREEFORM_ENABLED = "freeform_enabled"
+        private const val KEY_FREEFORM_WINDOW_MODE = "freeform_window_mode"
+        private const val KEY_FREEFORM_CUSTOM_W = "freeform_custom_width"
+        private const val KEY_FREEFORM_CUSTOM_H = "freeform_custom_height"
+        private const val KEY_SCALE_FACTOR = "scale_factor"
+        private const val KEY_PANEL_MAX_HEIGHT = "panel_max_height"
+        private const val KEY_PICKER_MAX_HEIGHT = "picker_max_height"
+        private const val KEY_SHOW_NOTIFICATION_APPS = "show_notification_apps"
+        private const val KEY_DRAG_TO_SPLIT = "drag_to_split"
+        private const val KEY_REMEMBER_SCROLL = "remember_scroll"
+        private const val KEY_AUTO_SHOW_KEYBOARD = "auto_show_keyboard"
+        private const val KEY_SIDEBAR_SCROLL = "last_sidebar_scroll"
+        private const val KEY_PICKER_SCROLL = "last_picker_scroll"
+        private const val KEY_GAME_APPS = "game_apps"
+        private const val KEY_AUTO_HIDE_FULLSCREEN = "auto_hide_fullscreen"
+        private const val KEY_FULLSCREEN_WHITELIST = "fullscreen_whitelist"
+        private const val KEY_DELIBERATE_GESTURE_GAMES = "deliberate_gesture_games"
+        private const val KEY_SLIDE_BRIGHTNESS_ENABLED = "slide_brightness_enabled"
+        private const val KEY_SLIDE_VOLUME_ENABLED = "slide_volume_enabled"
+        private const val KEY_SLIDE_SENSITIVITY = "slide_sensitivity"
+        private const val KEY_SWIPE_SENSITIVITY = "swipe_sensitivity"
+        private const val KEY_USE_AUTOMATION_FOR_GESTURES = "use_automation_for_gestures"
+        private const val KEY_ONLY_ON_HOME = "only_on_home"
+        private const val KEY_FAVORITE_APP = "favorite_app_package"
+        private const val KEY_NOTCH_GESTURES_ENABLED = "notch_gestures_enabled"
+        private const val KEY_NOTCH_TAP_ACTION = "notch_tap_action"
+        private const val KEY_NOTCH_DOUBLE_TAP_ACTION = "notch_double_tap_action"
+        private const val KEY_NOTCH_TRIPLE_TAP_ACTION = "notch_triple_tap_action"
+        private const val KEY_NOTCH_LONG_PRESS_ACTION = "notch_long_press_action"
+
+        private const val KEY_TAP_ACTION = "tap_action"
+        private const val KEY_DOUBLE_TAP_ACTION = "double_tap_action"
+        private const val KEY_TRIPLE_TAP_ACTION = "triple_tap_action"
+        private const val KEY_LONG_PRESS_ACTION = "long_press_action"
+        
+        private const val DELIMITER = ","
+
+        const val ACTION_NONE = 0
+        const val ACTION_OPEN_LAUNCHER = 1
+        const val ACTION_SCREENSHOT = 2
+        const val ACTION_PREVIOUS_APP = 3
+        const val ACTION_BACK = 4
+        const val ACTION_HOME = 5
+        const val ACTION_RECENTS = 6
+        const val ACTION_NOTIFICATIONS = 7
+        const val ACTION_QUICK_SETTINGS = 8
+        const val ACTION_LOCK_SCREEN = 9
+        const val ACTION_POWER_MENU = 10
+        const val ACTION_FLASHLIGHT = 11
+        const val ACTION_CAMERA = 12
+        const val ACTION_AUTO_ROTATION = 13
+        const val ACTION_OPEN_FAVORITE_APP = 14
+        const val ACTION_MOVE_HANDLE = 15
+
+        const val ANIM_TYPE_SLIDE = "slide"
+        const val ANIM_TYPE_POPUP = "popup"
+
+        const val SIDE_RIGHT = "right"
+        const val SIDE_LEFT = "left"
+
+        const val THEME_ORIGIN = "origin"
+        const val THEME_HYPEROS = "hyperos"
+        const val THEME_REALME = "realme"
+        const val THEME_RICH = "rich"
+
+        const val SHAPE_SYSTEM = "system"
+        const val SHAPE_CIRCLE = "circle"
+        const val SHAPE_SQUIRCLE = "squircle"
+        const val SHAPE_SQUARE = "square"
+        const val SHAPE_ROUNDED = "rounded"
+
+        const val STYLE_POWER = "power"
+        const val STYLE_CLASSIC = "classic"
+
+        // Theme modes
+        const val MODE_SYSTEM = 0
+        const val MODE_LIGHT = 1
+        const val MODE_DARK = 2
+
+        // Freeform window size modes
+        const val FREEFORM_MODE_STANDARD  = "standard"  // 80% screen, centered
+        const val FREEFORM_MODE_PORTRAIT  = "portrait"  // Narrow tall window
+        const val FREEFORM_MODE_MAXIMIZED = "maximized" // Full screen freeform
+        const val FREEFORM_MODE_CUSTOM    = "custom"    // User-defined width & height %
+
+        // Defaults
+        val DEFAULT_SIDE = SIDE_RIGHT
+        const val DEFAULT_AUTO_START = true
+        const val DEFAULT_SHOW_PILL = true
+        const val DEFAULT_HAPTIC = true
+        const val DEFAULT_OPACITY = 100
+        const val DEFAULT_HANDLE_HEIGHT = 80
+        const val DEFAULT_HANDLE_WIDTH = 32
+        const val DEFAULT_HANDLE_OFFSET = 0
+        const val DEFAULT_ACCENT_COLOR = "#4A9EFF"
+        const val DEFAULT_USE_CUSTOM_ACCENT = false
+        const val DEFAULT_PANEL_COLS = 1
+        const val DEFAULT_THEME = THEME_ORIGIN
+        const val DEFAULT_PANEL_RADIUS = 20
+        const val DEFAULT_PANEL_BG = "#E61A1C1E"
+        const val DEFAULT_PILL_COLOR = "#FFFFFF"
+        const val DEFAULT_HIDE_BG = false
+        val DEFAULT_ICON_SHAPE = SHAPE_SQUIRCLE
+        const val DEFAULT_GESTURES = true
+        const val DEFAULT_SHOW_LANDSCAPE = true
+        const val DEFAULT_PILL_WIDTH = 5
+        const val DEFAULT_TAP_TO_OPEN = true
+        const val DEFAULT_DOUBLE_TAP_TO_OPEN = false
+        const val DEFAULT_TRIPLE_TAP_TO_OPEN = false
+        const val DEFAULT_ICON_PACK = "none"
+        const val DEFAULT_SHOW_LOGS = false
+        const val DEFAULT_BLUR_AMOUNT = 15
+        const val DEFAULT_ANIM_SPEED = 400
+        const val DEFAULT_PICKER_ANIM = ANIM_TYPE_POPUP
+        const val DEFAULT_PICKER_GAP = 20
+        const val DEFAULT_HOME_BUTTON_STYLE = STYLE_POWER
+        const val DEFAULT_THEME_MODE = MODE_SYSTEM
+        const val DEFAULT_SHOW_TOOLS = true
+        const val DEFAULT_SHOW_TOOLS_PANEL = true
+        const val DEFAULT_SLIDE_BRIGHTNESS = true
+        const val DEFAULT_SLIDE_VOLUME = true
+        const val DEFAULT_SLIDE_SENSITIVITY = 100
+        const val DEFAULT_SWIPE_SENSITIVITY = 100
+    }
+
+    fun resetUIColors() {
+        prefs.edit {
+            putString(KEY_ACCENT_COLOR, DEFAULT_ACCENT_COLOR)
+            putString(KEY_PANEL_BG_COLOR, DEFAULT_PANEL_BG)
+            putBoolean(KEY_USE_CUSTOM_ACCENT, DEFAULT_USE_CUSTOM_ACCENT)
+        }
+    }
+
+    /** One registry for both export and import. Runtime/session keys are excluded. */
+    internal fun backupSnapshot(): Map<String, Any> = linkedMapOf(
+        KEY_THEME_MODE to themeMode,
+        KEY_AUTO_SHOW_KEYBOARD to autoShowKeyboard,
+        KEY_REMEMBER_SCROLL to rememberScroll,
+        KEY_DRAG_TO_SPLIT to dragToSplit,
+        KEY_SHOW_NOTIFICATION_APPS to showNotificationApps,
+        KEY_PANEL_MAX_HEIGHT to panelMaxHeight,
+        KEY_PICKER_MAX_HEIGHT to pickerMaxHeight,
+        KEY_PILL_COLOR to pillColor,
+        KEY_FREEFORM_ENABLED to freeformEnabled,
+        KEY_FREEFORM_WINDOW_MODE to freeformWindowMode,
+        KEY_FREEFORM_CUSTOM_W to freeformCustomWidth,
+        KEY_FREEFORM_CUSTOM_H to freeformCustomHeight,
+        KEY_SCALE_FACTOR to scaleFactor,
+        KEY_SHOW_SYS_INFO to showSysInfo,
+        KEY_SHOW_SCREENSHOT_TOOL to showScreenshotTool,
+        KEY_SHOW_TOOLS_PANEL_BUTTON to showToolsPanelButton,
+        KEY_SHOW_POWER_MENU to showPowerMenu,
+        KEY_SHOW_VOLUME_KEYS to showVolumeKeys,
+        KEY_SHOW_BRIGHTNESS_KEYS to showBrightnessKeys,
+        KEY_HOME_BUTTON_STYLE to homeButtonStyle,
+        KEY_PICKER_GAP to pickerGap,
+        KEY_USE_CUSTOM_ACCENT to useCustomAccent,
+        KEY_ICON_PACK to selectedIconPack,
+        KEY_ICON_PACK_LABEL to iconPackLabel,
+        KEY_TAP_TO_OPEN to tapToOpen,
+        KEY_DOUBLE_TAP_TO_OPEN to doubleTapToOpen,
+        KEY_TRIPLE_TAP_TO_OPEN to tripleTapToOpen,
+        KEY_TAP_ACTION to tapAction,
+        KEY_DOUBLE_TAP_ACTION to doubleTapAction,
+        KEY_TRIPLE_TAP_ACTION to tripleTapAction,
+        KEY_LONG_PRESS_ACTION to longPressAction,
+        KEY_GESTURES_ENABLED to gesturesEnabled,
+        KEY_SHOW_IN_LANDSCAPE to showInLandscape,
+        KEY_ICON_SHAPE to iconShape,
+        KEY_SHOW_PILL to showPill,
+        KEY_HAPTIC_ENABLED to hapticEnabled,
+        KEY_BLUR_ENABLED to blurEnabled,
+        KEY_BLUR_AMOUNT to blurAmount,
+        KEY_PANEL_OPACITY to panelOpacity,
+        KEY_HANDLE_HEIGHT to handleHeight,
+        KEY_HANDLE_WIDTH to handleWidth,
+        KEY_HANDLE_OFFSET to handleVerticalOffset,
+        KEY_ACCENT_COLOR to accentColor,
+        KEY_PANEL_COLUMNS to panelColumns,
+        KEY_UI_THEME to uiTheme,
+        KEY_PANEL_RADIUS to panelCornerRadius,
+        KEY_PANEL_BG_COLOR to panelBackgroundColor,
+        KEY_HIDE_BG to hideBackground,
+        KEY_PILL_WIDTH to pillWidth,
+        KEY_SHOW_TOOLS to showTools,
+        KEY_SHOW_LOGS to showLogs,
+        KEY_ANIM_SPEED to animSpeed,
+        KEY_PICKER_ANIM_TYPE to pickerAnimType,
+        KEY_SLIDE_BRIGHTNESS_ENABLED to slideBrightnessEnabled,
+        KEY_SLIDE_VOLUME_ENABLED to slideVolumeEnabled,
+        KEY_SLIDE_SENSITIVITY to slideSensitivity,
+        KEY_SWIPE_SENSITIVITY to swipeSensitivity,
+        KEY_USE_AUTOMATION_FOR_GESTURES to useAutomationForGestures,
+        KEY_ONLY_ON_HOME to onlyOnHome,
+        KEY_FAVORITE_APP to favoriteAppPackage,
+        "Locale.Helper.Selected.Language" to appLanguage,
+        KEY_NOTCH_GESTURES_ENABLED to notchGesturesEnabled,
+        KEY_NOTCH_TAP_ACTION to notchTapAction,
+        KEY_NOTCH_DOUBLE_TAP_ACTION to notchDoubleTapAction,
+        KEY_NOTCH_TRIPLE_TAP_ACTION to notchTripleTapAction,
+        KEY_NOTCH_LONG_PRESS_ACTION to notchLongPressAction,
+        KEY_PANEL_SIDE to panelSide,
+        KEY_AUTO_START to autoStart,
+        KEY_AUTO_HIDE_FULLSCREEN to autoHideInFullscreen,
+        KEY_DELIBERATE_GESTURE_GAMES to deliberateGestureInGames,
+        KEY_PANEL_APPS to getPanelApps().joinToString(DELIMITER),
+        KEY_GAME_APPS to getGameApps().joinToString(DELIMITER),
+        KEY_FULLSCREEN_WHITELIST to getFullscreenWhitelist().joinToString(DELIMITER)
+    )
+
+    fun exportToJson(): String = SettingsBackup.encode(backupSnapshot())
+
+    fun importFromJson(json: String): Boolean {
+        val values = try { SettingsBackup.decode(json, backupSnapshot()) } catch (_: Exception) { return false }
+        val editor = prefs.edit()
+        values.forEach { (key, value) ->
+            when (value) {
+                is String -> editor.putString(key, value)
+                is Boolean -> editor.putBoolean(key, value)
+                is Int -> editor.putInt(key, value)
+                is Float -> editor.putFloat(key, value)
+            }
+        }
+        return editor.commit()
+    }
+
+    fun resetToDefaults() {
+        prefs.edit(commit = true) {
+            putString(KEY_PANEL_SIDE, DEFAULT_SIDE)
+            putBoolean(KEY_AUTO_START, DEFAULT_AUTO_START)
+            putBoolean(KEY_SHOW_PILL, DEFAULT_SHOW_PILL)
+            putBoolean(KEY_HAPTIC_ENABLED, DEFAULT_HAPTIC)
+            putInt(KEY_PANEL_OPACITY, DEFAULT_OPACITY)
+            putInt(KEY_HANDLE_HEIGHT, DEFAULT_HANDLE_HEIGHT)
+            putInt(KEY_HANDLE_WIDTH, DEFAULT_HANDLE_WIDTH)
+            putInt(KEY_HANDLE_OFFSET, DEFAULT_HANDLE_OFFSET)
+            putString(KEY_ACCENT_COLOR, DEFAULT_ACCENT_COLOR)
+            putBoolean(KEY_USE_CUSTOM_ACCENT, DEFAULT_USE_CUSTOM_ACCENT)
+            putInt(KEY_PANEL_COLUMNS, DEFAULT_PANEL_COLS)
+            putString(KEY_UI_THEME, DEFAULT_THEME)
+            putInt(KEY_PANEL_RADIUS, DEFAULT_PANEL_RADIUS)
+            putString(KEY_PANEL_BG_COLOR, DEFAULT_PANEL_BG)
+            putBoolean(KEY_HIDE_BG, DEFAULT_HIDE_BG)
+            putBoolean(KEY_SHOW_TOOLS, DEFAULT_SHOW_TOOLS)
+            putBoolean(KEY_SHOW_TOOLS_PANEL_BUTTON, DEFAULT_SHOW_TOOLS_PANEL)
+            putString(KEY_ICON_SHAPE, DEFAULT_ICON_SHAPE)
+            putBoolean(KEY_GESTURES_ENABLED, DEFAULT_GESTURES)
+            putBoolean(KEY_SHOW_IN_LANDSCAPE, DEFAULT_SHOW_LANDSCAPE)
+            putInt(KEY_PILL_WIDTH, DEFAULT_PILL_WIDTH)
+            putString(KEY_PILL_COLOR, DEFAULT_PILL_COLOR)
+            putBoolean(KEY_TAP_TO_OPEN, DEFAULT_TAP_TO_OPEN)
+            putBoolean(KEY_DOUBLE_TAP_TO_OPEN, DEFAULT_DOUBLE_TAP_TO_OPEN)
+            putBoolean(KEY_TRIPLE_TAP_TO_OPEN, DEFAULT_TRIPLE_TAP_TO_OPEN)
+            remove(KEY_TAP_ACTION)
+            remove(KEY_DOUBLE_TAP_ACTION)
+            remove(KEY_TRIPLE_TAP_ACTION)
+            remove(KEY_LONG_PRESS_ACTION)
+            putString(KEY_ICON_PACK, DEFAULT_ICON_PACK)
+            putString(KEY_ICON_PACK_LABEL, "System Default")
+            putInt(KEY_BLUR_AMOUNT, DEFAULT_BLUR_AMOUNT)
+            putBoolean(KEY_BLUR_ENABLED, false)
+            putBoolean(KEY_SHOW_LOGS, false)
+            putInt(KEY_ANIM_SPEED, DEFAULT_ANIM_SPEED)
+            putString(KEY_PICKER_ANIM_TYPE, DEFAULT_PICKER_ANIM)
+            putInt(KEY_PICKER_GAP, DEFAULT_PICKER_GAP)
+            putBoolean(KEY_SHOW_SYS_INFO, false)
+            putBoolean(KEY_SHOW_SCREENSHOT_TOOL, true)
+            putBoolean(KEY_SHOW_POWER_MENU, false)
+            putBoolean(KEY_SHOW_VOLUME_KEYS, false)
+            putBoolean(KEY_SHOW_BRIGHTNESS_KEYS, false)
+            putBoolean(KEY_SLIDE_BRIGHTNESS_ENABLED, DEFAULT_SLIDE_BRIGHTNESS)
+            putBoolean(KEY_SLIDE_VOLUME_ENABLED, DEFAULT_SLIDE_VOLUME)
+            putInt(KEY_SLIDE_SENSITIVITY, DEFAULT_SLIDE_SENSITIVITY)
+            putInt(KEY_SWIPE_SENSITIVITY, DEFAULT_SWIPE_SENSITIVITY)
+            putBoolean(KEY_USE_AUTOMATION_FOR_GESTURES, false)
+            putString(KEY_HOME_BUTTON_STYLE, DEFAULT_HOME_BUTTON_STYLE)
+            putInt(KEY_THEME_MODE, DEFAULT_THEME_MODE)
+            putBoolean(KEY_FREEFORM_ENABLED, false)
+            putString(KEY_FREEFORM_WINDOW_MODE, FREEFORM_MODE_STANDARD)
+            putInt(KEY_FREEFORM_CUSTOM_W, 80)
+            putInt(KEY_FREEFORM_CUSTOM_H, 80)
+            putFloat(KEY_SCALE_FACTOR, 1.0f)
+            putInt(KEY_PANEL_MAX_HEIGHT, 350)
+            putInt(KEY_PICKER_MAX_HEIGHT, 450)
+            putBoolean(KEY_SHOW_NOTIFICATION_APPS, false)
+            putBoolean(KEY_DRAG_TO_SPLIT, true)
+            putBoolean(KEY_REMEMBER_SCROLL, false)
+            putBoolean(KEY_AUTO_SHOW_KEYBOARD, false)
+            putString(KEY_PANEL_APPS, "")
+            putString(KEY_GAME_APPS, "")
+            putBoolean(KEY_AUTO_HIDE_FULLSCREEN, false)
+            putString(KEY_FULLSCREEN_WHITELIST, "")
+            putBoolean(KEY_DELIBERATE_GESTURE_GAMES, true)
+            putInt(KEY_SIDEBAR_SCROLL, 0)
+            putInt(KEY_PICKER_SCROLL, 0)
+            remove(KEY_ONLY_ON_HOME)
+            remove(KEY_FAVORITE_APP)
+            remove(KEY_NOTCH_GESTURES_ENABLED)
+            remove(KEY_NOTCH_TAP_ACTION)
+            remove(KEY_NOTCH_DOUBLE_TAP_ACTION)
+            remove(KEY_NOTCH_TRIPLE_TAP_ACTION)
+            remove(KEY_NOTCH_LONG_PRESS_ACTION)
+        }
+    }
+
+    var themeMode: Int
+        get() = prefs.getInt(KEY_THEME_MODE, DEFAULT_THEME_MODE)
+        set(value) = prefs.edit { putInt(KEY_THEME_MODE, value) }
+
+    var autoShowKeyboard: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_SHOW_KEYBOARD, false)
+        set(value) = prefs.edit { putBoolean(KEY_AUTO_SHOW_KEYBOARD, value) }
+
+    var rememberScroll: Boolean
+        get() = prefs.getBoolean(KEY_REMEMBER_SCROLL, false)
+        set(value) = prefs.edit { putBoolean(KEY_REMEMBER_SCROLL, value) }
+
+    var lastSidebarScroll: Int
+        get() = prefs.getInt(KEY_SIDEBAR_SCROLL, 0)
+        set(value) = prefs.edit { putInt(KEY_SIDEBAR_SCROLL, value) }
+
+    var lastPickerScroll: Int
+        get() = prefs.getInt(KEY_PICKER_SCROLL, 0)
+        set(value) = prefs.edit { putInt(KEY_PICKER_SCROLL, value) }
+
+    var dragToSplit: Boolean
+        get() = prefs.getBoolean(KEY_DRAG_TO_SPLIT, true)
+        set(value) = prefs.edit { putBoolean(KEY_DRAG_TO_SPLIT, value) }
+
+    var showNotificationApps: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_NOTIFICATION_APPS, false)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_NOTIFICATION_APPS, value) }
+
+    var panelMaxHeight: Int
+        get() = prefs.getInt(KEY_PANEL_MAX_HEIGHT, 350)
+        set(value) = prefs.edit { putInt(KEY_PANEL_MAX_HEIGHT, value) }
+
+    var pickerMaxHeight: Int
+        get() = prefs.getInt(KEY_PICKER_MAX_HEIGHT, 450)
+        set(value) = prefs.edit { putInt(KEY_PICKER_MAX_HEIGHT, value) }
+
+    var pillColor: String
+        get() = prefs.getString(KEY_PILL_COLOR, DEFAULT_PILL_COLOR) ?: DEFAULT_PILL_COLOR
+        set(value) = prefs.edit { putString(KEY_PILL_COLOR, value) }
+
+    var freeformEnabled: Boolean
+        get() = prefs.getBoolean(KEY_FREEFORM_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_FREEFORM_ENABLED, value) }
+
+    var freeformWindowMode: String
+        get() = prefs.getString(KEY_FREEFORM_WINDOW_MODE, FREEFORM_MODE_STANDARD) ?: FREEFORM_MODE_STANDARD
+        set(value) = prefs.edit { putString(KEY_FREEFORM_WINDOW_MODE, value) }
+
+    var freeformCustomWidth: Int
+        get() = prefs.getInt(KEY_FREEFORM_CUSTOM_W, 80)
+        set(value) = prefs.edit { putInt(KEY_FREEFORM_CUSTOM_W, value) }
+
+    var freeformCustomHeight: Int
+        get() = prefs.getInt(KEY_FREEFORM_CUSTOM_H, 80)
+        set(value) = prefs.edit { putInt(KEY_FREEFORM_CUSTOM_H, value) }
+
+    var scaleFactor: Float
+        get() = prefs.getFloat(KEY_SCALE_FACTOR, 1.0f)
+        set(value) = prefs.edit { putFloat(KEY_SCALE_FACTOR, value) }
+
+    var showSysInfo: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_SYS_INFO, false)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_SYS_INFO, value) }
+
+    var showScreenshotTool: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_SCREENSHOT_TOOL, true)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_SCREENSHOT_TOOL, value) }
+
+    var showToolsPanelButton: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_TOOLS_PANEL_BUTTON, DEFAULT_SHOW_TOOLS_PANEL)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_TOOLS_PANEL_BUTTON, value) }
+
+    var showPowerMenu: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_POWER_MENU, false)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_POWER_MENU, value) }
+
+    var showVolumeKeys: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_VOLUME_KEYS, false)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_VOLUME_KEYS, value) }
+
+    var showBrightnessKeys: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_BRIGHTNESS_KEYS, false)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_BRIGHTNESS_KEYS, value) }
+
+    var homeButtonStyle: String
+        get() = prefs.getString(KEY_HOME_BUTTON_STYLE, DEFAULT_HOME_BUTTON_STYLE) ?: DEFAULT_HOME_BUTTON_STYLE
+        set(value) = prefs.edit { putString(KEY_HOME_BUTTON_STYLE, value) }
+
+    var pickerGap: Int
+        get() = prefs.getInt(KEY_PICKER_GAP, DEFAULT_PICKER_GAP)
+        set(value) = prefs.edit { putInt(KEY_PICKER_GAP, value) }
+
+    var useCustomAccent: Boolean
+        get() = prefs.getBoolean(KEY_USE_CUSTOM_ACCENT, DEFAULT_USE_CUSTOM_ACCENT)
+        set(value) = prefs.edit { putBoolean(KEY_USE_CUSTOM_ACCENT, value) }
+
+    var selectedIconPack: String
+        get() = prefs.getString(KEY_ICON_PACK, DEFAULT_ICON_PACK) ?: DEFAULT_ICON_PACK
+        set(value) = prefs.edit { putString(KEY_ICON_PACK, value) }
+
+    var iconPackLabel: String
+        get() = prefs.getString(KEY_ICON_PACK_LABEL, "System Default") ?: "System Default"
+        set(value) = prefs.edit { putString(KEY_ICON_PACK_LABEL, value) }
+
+    var tapToOpen: Boolean
+        get() = prefs.getBoolean(KEY_TAP_TO_OPEN, DEFAULT_TAP_TO_OPEN)
+        set(value) = prefs.edit { putBoolean(KEY_TAP_TO_OPEN, value) }
+
+    var doubleTapToOpen: Boolean
+        get() = prefs.getBoolean(KEY_DOUBLE_TAP_TO_OPEN, DEFAULT_DOUBLE_TAP_TO_OPEN)
+        set(value) = prefs.edit { putBoolean(KEY_DOUBLE_TAP_TO_OPEN, value) }
+
+    var tripleTapToOpen: Boolean
+        get() = prefs.getBoolean(KEY_TRIPLE_TAP_TO_OPEN, DEFAULT_TRIPLE_TAP_TO_OPEN)
+        set(value) = prefs.edit { putBoolean(KEY_TRIPLE_TAP_TO_OPEN, value) }
+
+    var tapAction: Int
+        get() = prefs.getInt(KEY_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_TAP_ACTION, value) }
+
+    var doubleTapAction: Int
+        get() = prefs.getInt(KEY_DOUBLE_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_DOUBLE_TAP_ACTION, value) }
+
+    var tripleTapAction: Int
+        get() = prefs.getInt(KEY_TRIPLE_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_TRIPLE_TAP_ACTION, value) }
+
+    var longPressAction: Int
+        get() = prefs.getInt(KEY_LONG_PRESS_ACTION, ACTION_MOVE_HANDLE)
+        set(value) = prefs.edit { putInt(KEY_LONG_PRESS_ACTION, value) }
+
+    var gesturesEnabled: Boolean
+        get() = prefs.getBoolean(KEY_GESTURES_ENABLED, DEFAULT_GESTURES)
+        set(value) = prefs.edit { putBoolean(KEY_GESTURES_ENABLED, value) }
+
+    var showInLandscape: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_IN_LANDSCAPE, DEFAULT_SHOW_LANDSCAPE)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_IN_LANDSCAPE, value) }
+
+    var iconShape: String
+        get() = prefs.getString(KEY_ICON_SHAPE, DEFAULT_ICON_SHAPE) ?: DEFAULT_ICON_SHAPE
+        set(value) = prefs.edit { putString(KEY_ICON_SHAPE, value) }
+
+    var showPill: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_PILL, DEFAULT_SHOW_PILL)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_PILL, value) }
+
+    var hapticEnabled: Boolean
+        get() = prefs.getBoolean(KEY_HAPTIC_ENABLED, DEFAULT_HAPTIC)
+        set(value) = prefs.edit { putBoolean(KEY_HAPTIC_ENABLED, value) }
+
+    var blurEnabled: Boolean
+        get() = prefs.getBoolean(KEY_BLUR_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_BLUR_ENABLED, value) }
+
+    var blurAmount: Int
+        get() = prefs.getInt(KEY_BLUR_AMOUNT, DEFAULT_BLUR_AMOUNT)
+        set(value) = prefs.edit { putInt(KEY_BLUR_AMOUNT, value) }
+
+    var panelOpacity: Int
+        get() = prefs.getInt(KEY_PANEL_OPACITY, DEFAULT_OPACITY)
+        set(value) = prefs.edit { putInt(KEY_PANEL_OPACITY, value) }
+
+    var handleHeight: Int
+        get() = prefs.getInt(KEY_HANDLE_HEIGHT, DEFAULT_HANDLE_HEIGHT)
+        set(value) = prefs.edit { putInt(KEY_HANDLE_HEIGHT, value) }
+
+    var handleWidth: Int
+        get() = prefs.getInt(KEY_HANDLE_WIDTH, DEFAULT_HANDLE_WIDTH)
+        set(value) = prefs.edit { putInt(KEY_HANDLE_WIDTH, value) }
+
+    var handleVerticalOffset: Int
+        get() = prefs.getInt(KEY_HANDLE_OFFSET, DEFAULT_HANDLE_OFFSET)
+        set(value) = prefs.edit { putInt(KEY_HANDLE_OFFSET, value) }
+
+    var accentColor: String
+        get() = prefs.getString(KEY_ACCENT_COLOR, DEFAULT_ACCENT_COLOR) ?: DEFAULT_ACCENT_COLOR
+        set(value) = prefs.edit { putString(KEY_ACCENT_COLOR, value) }
+
+    var panelColumns: Int
+        get() = (prefs.getInt(KEY_PANEL_COLUMNS, DEFAULT_PANEL_COLS)).coerceIn(1, 2)
+        set(value) = prefs.edit { putInt(KEY_PANEL_COLUMNS, value.coerceIn(1, 2)) }
+
+    var uiTheme: String
+        get() = prefs.getString(KEY_UI_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
+        set(value) = prefs.edit { putString(KEY_UI_THEME, value) }
+
+    var panelCornerRadius: Int
+        get() = prefs.getInt(KEY_PANEL_RADIUS, DEFAULT_PANEL_RADIUS)
+        set(value) = prefs.edit { putInt(KEY_PANEL_RADIUS, value) }
+
+    var panelBackgroundColor: String
+        get() = prefs.getString(KEY_PANEL_BG_COLOR, DEFAULT_PANEL_BG) ?: DEFAULT_PANEL_BG
+        set(value) = prefs.edit { putString(KEY_PANEL_BG_COLOR, value) }
+
+    var hideBackground: Boolean
+        get() = prefs.getBoolean(KEY_HIDE_BG, DEFAULT_HIDE_BG)
+        set(value) = prefs.edit { putBoolean(KEY_HIDE_BG, value) }
+
+    var pillWidth: Int
+        get() = prefs.getInt(KEY_PILL_WIDTH, DEFAULT_PILL_WIDTH)
+        set(value) = prefs.edit { putInt(KEY_PILL_WIDTH, value) }
+
+    var showTools: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_TOOLS, DEFAULT_SHOW_TOOLS)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_TOOLS, value) }
+
+    var showLogs: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_LOGS, DEFAULT_SHOW_LOGS)
+        set(value) = prefs.edit { putBoolean(KEY_SHOW_LOGS, value) }
+
+    var animSpeed: Int
+        get() = prefs.getInt(KEY_ANIM_SPEED, DEFAULT_ANIM_SPEED)
+        set(value) = prefs.edit { putInt(KEY_ANIM_SPEED, value) }
+
+    var pickerAnimType: String
+        get() = prefs.getString(KEY_PICKER_ANIM_TYPE, DEFAULT_PICKER_ANIM) ?: DEFAULT_PICKER_ANIM
+        set(value) = prefs.edit { putString(KEY_PICKER_ANIM_TYPE, value) }
+
+    var setupCompleted: Boolean
+        get() = prefs.getBoolean("setup_completed_v2", false)
+        set(value) = prefs.edit { putBoolean("setup_completed_v2", value) }
+
+    var slideBrightnessEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SLIDE_BRIGHTNESS_ENABLED, DEFAULT_SLIDE_BRIGHTNESS)
+        set(value) = prefs.edit { putBoolean(KEY_SLIDE_BRIGHTNESS_ENABLED, value) }
+
+    var slideVolumeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SLIDE_VOLUME_ENABLED, DEFAULT_SLIDE_VOLUME)
+        set(value) = prefs.edit { putBoolean(KEY_SLIDE_VOLUME_ENABLED, value) }
+
+    var slideSensitivity: Int
+        get() = prefs.getInt(KEY_SLIDE_SENSITIVITY, DEFAULT_SLIDE_SENSITIVITY)
+        set(value) = prefs.edit { putInt(KEY_SLIDE_SENSITIVITY, value) }
+
+    var swipeSensitivity: Int
+        get() = prefs.getInt(KEY_SWIPE_SENSITIVITY, DEFAULT_SWIPE_SENSITIVITY)
+        set(value) = prefs.edit { putInt(KEY_SWIPE_SENSITIVITY, value) }
+
+    var useAutomationForGestures: Boolean
+        get() = prefs.getBoolean(KEY_USE_AUTOMATION_FOR_GESTURES, false)
+        set(value) = prefs.edit { putBoolean(KEY_USE_AUTOMATION_FOR_GESTURES, value) }
+
+    var onlyOnHome: Boolean
+        get() = prefs.getBoolean(KEY_ONLY_ON_HOME, false)
+        set(value) = prefs.edit { putBoolean(KEY_ONLY_ON_HOME, value) }
+
+    var favoriteAppPackage: String
+        get() = prefs.getString(KEY_FAVORITE_APP, "") ?: ""
+        set(value) = prefs.edit { putString(KEY_FAVORITE_APP, value) }
+
+    var appLanguage: String
+        get() = prefs.getString("Locale.Helper.Selected.Language", "system") ?: "system"
+        set(value) = prefs.edit { putString("Locale.Helper.Selected.Language", value) }
+
+    var notchGesturesEnabled: Boolean
+        get() = prefs.getBoolean(KEY_NOTCH_GESTURES_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_NOTCH_GESTURES_ENABLED, value) }
+
+    var notchTapAction: Int
+        get() = prefs.getInt(KEY_NOTCH_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_NOTCH_TAP_ACTION, value) }
+
+    var notchDoubleTapAction: Int
+        get() = prefs.getInt(KEY_NOTCH_DOUBLE_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_NOTCH_DOUBLE_TAP_ACTION, value) }
+
+    var notchTripleTapAction: Int
+        get() = prefs.getInt(KEY_NOTCH_TRIPLE_TAP_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_NOTCH_TRIPLE_TAP_ACTION, value) }
+
+    var notchLongPressAction: Int
+        get() = prefs.getInt(KEY_NOTCH_LONG_PRESS_ACTION, ACTION_NONE)
+        set(value) = prefs.edit { putInt(KEY_NOTCH_LONG_PRESS_ACTION, value) }
+
+    var serviceEnabled: Boolean
+        get() = prefs.getBoolean("service_enabled", true)
+        set(value) = setServiceEnabled(value, false)
+
+    fun setServiceEnabled(enabled: Boolean, commit: Boolean = false) {
+        prefs.edit(commit = commit) {
+            putBoolean("service_enabled", enabled)
+        }
+    }
+
+    /**
+     * Shared logic for starting/stopping the sidebar service.
+     * Ensures UI consistency across App and Quick Tile by delegating the state
+     * change to the main process service.
+     */
+    fun toggleService(context: Context, forcedState: Boolean? = null): Boolean {
+        val enabled = forcedState ?: !serviceEnabled
+        if (!enabled) {
+            setServiceEnabled(false, commit = true)
+            context.stopService(Intent(context, FloatingPanelService::class.java))
+            return true
+        }
+        if (!PanelCapabilities.canStart(context)) return false
+        return try {
+            androidx.core.content.ContextCompat.startForegroundService(context,
+                Intent(context, FloatingPanelService::class.java).apply {
+                    action = FloatingPanelService.ACTION_TOGGLE
+                    putExtra("target_state", true)
+                })
+            setServiceEnabled(true, commit = true)
+            true
+        } catch (_: Exception) { false }
+    }
+
+    /**
+     * Generates a unique key representing the current visual state of icons.
+     * Including this in Glide requests ensures everything refreshes automatically
+     * when ANY appearance setting is changed.
+     */
+    val appearanceKey: String
+        get() = "shape:$iconShape|pack:$selectedIconPack|theme:$uiTheme"
+
+    val hasConfiguredPanelApps: Boolean get() = prefs.contains(KEY_PANEL_APPS)
+
+    fun getPanelApps(): List<String> {
+        val raw = prefs.getString(KEY_PANEL_APPS, "") ?: ""
+        return if (raw.isBlank()) emptyList()
+        else raw.split(DELIMITER)
+            .filter { it.isNotBlank() }
+            .distinct()
+    }
+
+    fun setPanelApps(identifiers: List<String>) {
+        val unique = identifiers.filter { it.isNotBlank() }.distinct()
+        prefs.edit { putString(KEY_PANEL_APPS, unique.joinToString(DELIMITER)) }
+    }
+
+    fun addApp(identifier: String) {
+        val current = getPanelApps().toMutableList()
+        if (!current.contains(identifier)) {
+            current.add(identifier)
+            setPanelApps(current)
+        }
+    }
+
+    fun removeApp(identifier: String) {
+        val current = getPanelApps().toMutableList()
+        current.remove(identifier)
+        setPanelApps(current)
+    }
+
+    fun isInPanel(identifier: String): Boolean = getPanelApps().contains(identifier)
+
+    var panelSide: String
+        get() = prefs.getString(KEY_PANEL_SIDE, DEFAULT_SIDE) ?: DEFAULT_SIDE
+        set(value) = prefs.edit { putString(KEY_PANEL_SIDE, value) }
+
+    var autoStart: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_START, DEFAULT_AUTO_START)
+        set(value) = prefs.edit { putBoolean(KEY_AUTO_START, value) }
+
+    var currentForegroundPackage: String
+        get() = prefs.getString("current_foreground", "") ?: ""
+        set(value) = prefs.edit { putString("current_foreground", value) }
+
+    fun getGameApps(): List<String> {
+        val raw = prefs.getString(KEY_GAME_APPS, "") ?: ""
+        return if (raw.isBlank()) emptyList()
+        else raw.split(DELIMITER)
+            .filter { it.isNotBlank() }
+            .distinct()
+    }
+
+    fun setGameApps(packages: List<String>) {
+        val uniquePackages = packages.filter { it.isNotBlank() }.distinct()
+        prefs.edit { putString(KEY_GAME_APPS, uniquePackages.joinToString(DELIMITER)) }
+    }
+
+    var autoHideInFullscreen: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_HIDE_FULLSCREEN, false)
+        set(value) = prefs.edit { putBoolean(KEY_AUTO_HIDE_FULLSCREEN, value) }
+
+    var deliberateGestureInGames: Boolean
+        get() = prefs.getBoolean(KEY_DELIBERATE_GESTURE_GAMES, true)
+        set(value) = prefs.edit { putBoolean(KEY_DELIBERATE_GESTURE_GAMES, value) }
+
+    fun getFullscreenWhitelist(): List<String> {
+        val raw = prefs.getString(KEY_FULLSCREEN_WHITELIST, "") ?: ""
+        return if (raw.isBlank()) emptyList()
+        else raw.split(DELIMITER).filter { it.isNotBlank() }.distinct()
+    }
+
+    fun setFullscreenWhitelist(packages: List<String>) {
+        val unique = packages.filter { it.isNotBlank() }.distinct()
+        prefs.edit { putString(KEY_FULLSCREEN_WHITELIST, unique.joinToString(DELIMITER)) }
+    }
+
+    fun isWhitelistedFromAutoHide(packageName: String): Boolean {
+        return getFullscreenWhitelist().contains(packageName)
+    }
+}

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:clipChildren="false">
+
+    <!-- Container for the panel -->
+    <LinearLayout
+        android:id="@+id/panelContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:clipChildren="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+<!-- Main Sidebar Pill -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/panelCard"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_panel"
+    android:elevation="32dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="4dp">
+
+    <!-- Rich Vertical Handle -->
+    <View
+        android:id="@+id/panelHandle"
+        android:layout_width="4dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_close_btn"
+        android:backgroundTint="#40FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Scrollable app list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPanelApps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/toolsContainer" />
+
+    <!-- Tools Section -->
+    <LinearLayout
+        android:id="@+id/toolsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/rvPanelApps"
+        app:layout_constraintBottom_toTopOf="@id/btnClose">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="1dp"
+            android:background="#33FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Power Menu Section (Shizuku) -->
+        <LinearLayout
+            android:id="@+id/layoutPowerTools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+            
+            <ImageButton
+ android:contentDescription="@string/action_power_menu"                android:id="@+id/btnReboot"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_lock_power_off"
+                app:tint="#D9FFFFFF" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_pwr"
+                android:textColor="#80FFFFFF"
+                android:textSize="9sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+
+        <!-- Volume Controls Section -->
+        <LinearLayout
+            android:id="@+id/layoutVolumeTools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+ android:contentDescription="@string/ui_volume_plus"                android:id="@+id/btnVolumeUp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_media_play"
+                android:rotation="-90"
+                app:tint="#D9FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_vol_plus"
+                android:textColor="#80FFFFFF"
+                android:textSize="9sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="4dp" />
+
+            <ImageButton
+ android:contentDescription="@string/ui_volume_minus"                android:id="@+id/btnVolumeDown"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_media_play"
+                android:rotation="90"
+                app:tint="#D9FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_vol_minus"
+                android:textColor="#80FFFFFF"
+                android:textSize="9sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+
+        <!-- Brightness Controls Section -->
+        <LinearLayout
+            android:id="@+id/layoutBrightnessTools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+ android:contentDescription="@string/ui_brightness_plus"                android:id="@+id/btnBrightnessUp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_brightness_up"
+                app:tint="#D9FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_bri_plus"
+                android:textColor="#80FFFFFF"
+                android:textSize="9sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="4dp" />
+
+            <ImageButton
+ android:contentDescription="@string/ui_brightness_minus"                android:id="@+id/btnBrightnessDown"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_brightness_down"
+                app:tint="#D9FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_bri_minus"
+                android:textColor="#80FFFFFF"
+                android:textSize="9sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+
+        <!-- Screenshot Button -->
+        <ImageButton
+ android:contentDescription="@string/tool_screenshot_short"            android:id="@+id/btnScreenshot"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_close_btn"
+            android:backgroundTint="#1AFFFFFF"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_camera"
+            app:tint="#D9FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ui_sc"
+            android:textColor="#80FFFFFF"
+            android:textSize="9sp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- System Info -->
+        <LinearLayout
+            android:id="@+id/layoutSysInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvRamUsage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_ram_minus_minus"
+                android:textColor="#B3FFFFFF"
+                android:textSize="10sp" />
+            <TextView
+                android:id="@+id/tvBatTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_bat_minus_minus"
+                android:textColor="#B3FFFFFF"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+            <!-- Back button for folder navigation -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:contentDescription="@string/action_back"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="#D9FFFFFF"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolsContainer"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- Chevron at bottom of pill (now handles picker toggle) -->
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_close_btn"
+                android:backgroundTint="#1AFFFFFF"
+                android:contentDescription="@string/ui_toggle_picker"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_chevron_right"
+                android:rotation="180"
+                app:tint="#D9FFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolsContainer" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+</RelativeLayout>
+
+
+

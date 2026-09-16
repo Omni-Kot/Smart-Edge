@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="0dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/section_appearance"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="?attr/colorOnSurface" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:id="@+id/appearanceScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/app_screen_padding">
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/App_Card_Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    style="@style/App_CardContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/feature_theme_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_theme"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvThemeModeValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/theme_follow_system"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutlineVariant" android:layout_marginVertical="8dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutUIStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_style_theme"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvUIStyleValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/theme_origin"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/feature_blur" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="@string/blur_title" android:textColor="?attr/colorOnSurface" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/blur_desc" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" />
+
+                    <LinearLayout android:id="@+id/feature_blur_intensity" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="16dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/blur_intensity" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetBlur" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvBlurAmountValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_15" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbBlurAmount" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="5.0" android:valueTo="50.0" android:value="15.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/feature_hide_bg" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/invisible_bg" android:textColor="?attr/colorOnSurface" />
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutlineVariant" android:layout_marginVertical="12dp" />
+
+                    <LinearLayout
+                        android:id="@+id/feature_columns"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/panel_columns"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvColumnsValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_1_column"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/App_SectionTitle"
+                android:text="@string/section_icons_colors" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/App_Card_Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    style="@style/App_CardContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/feature_icon_shape"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/icon_shape"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvIconShapeValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_squircle"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutlineVariant" android:layout_marginVertical="12dp" />
+
+                    <LinearLayout android:id="@+id/feature_icon_pack" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/icon_pack" android:textColor="?attr/colorOnSurface" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvCurrentIconPack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/icon_pack_default" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        </LinearLayout>
+                        <com.google.android.material.button.MaterialButton 
+                            android:id="@+id/btnSelectIconPack" 
+                            style="@style/Widget.Material3.Button" 
+                            android:layout_width="wrap_content" 
+                            android:layout_height="wrap_content" 
+                            android:text="@string/done" 
+                            android:textSize="12sp"
+                            app:cornerRadius="12dp" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_icon_scale" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="16dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/icon_scale" android:textColor="?attr/colorOnSurface" android:textStyle="bold" />
+                            <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetIconScale" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                            <TextView android:id="@+id/tvIconScaleValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_1_0x" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                        </LinearLayout>
+                        <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                            android:id="@+id/sbIconScale" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="0.8" android:valueTo="2.0" android:stepSize="0.1" android:value="1.0" app:tickVisible="false" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutlineVariant" android:layout_marginVertical="16dp" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/feature_custom_accent" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/custom_accent_title" android:textColor="?attr/colorOnSurface" android:layout_marginBottom="12dp" />
+
+                    <LinearLayout android:id="@+id/feature_accent_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/accent_color" android:textColor="?attr/colorOnSurfaceVariant" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPickAccent"
+                            style="@style/App_Button_Tonal"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay_App_Corner50"
+                            app:icon="@drawable/ic_color_picker_custom"
+                            app:iconTint="?attr/colorOnPrimary"
+                            app:iconGravity="textStart"
+                            android:padding="0dp"
+                            app:iconPadding="0dp" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/feature_bg_color" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center_vertical">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/panel_bg_color" android:textColor="?attr/colorOnSurfaceVariant" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPickBg"
+                            style="@style/App_Button_Tonal"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay_App_Corner50"
+                            app:icon="@drawable/ic_color_picker_custom"
+                            app:iconTint="?attr/colorOnPrimary"
+                            app:iconGravity="textStart"
+                            android:padding="0dp"
+                            app:iconPadding="0dp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnResetUIColors"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/btn_reset_ui_colors"
+                        app:cornerRadius="@dimen/app_button_radius" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/App_SectionTitle"
+                android:text="@string/section_home_screen" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/App_Card_Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    style="@style/App_CardContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/feature_home_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/service_button_style"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvHomeButtonStyleValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/button_style_power"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/App_SectionTitle"
+                android:text="@string/section_layout_tuning" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/App_Card_Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    style="@style/App_CardContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout android:id="@+id/feature_opacity" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/panel_opacity" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetOpacity" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                        <TextView android:id="@+id/tvOpacityValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_100" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                    </LinearLayout>
+                    <com.google.android.material.slider.Slider style="@style/Widget.App.Slider"
+                        android:id="@+id/sbOpacity" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="10.0" android:valueTo="100.0" android:value="100.0" app:tickVisible="false" android:layout_marginBottom="12dp" />
+
+                    <LinearLayout android:id="@+id/feature_radius" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="8dp" android:layout_marginBottom="4dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/corner_radius" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetRadius" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                        <TextView android:id="@+id/tvRadiusValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_28dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                    </LinearLayout>
+                    <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                        android:id="@+id/sbPanelRadius" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="0.0" android:valueTo="60.0" android:value="20.0" app:tickVisible="false" android:layout_marginBottom="12dp" />
+
+                    <LinearLayout android:id="@+id/feature_max_height" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="8dp" android:layout_marginBottom="4dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/sidebar_max_height" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetMaxHeight" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                        <TextView android:id="@+id/tvMaxHeightValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_350dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                    </LinearLayout>
+                    <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                        android:id="@+id/sbMaxHeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="200.0" android:valueTo="800.0" android:value="350.0" app:tickVisible="false" android:layout_marginBottom="16dp" />
+
+                    <LinearLayout android:id="@+id/feature_picker_max_height" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="8dp" android:layout_marginBottom="4dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/picker_max_height" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        <ImageView android:contentDescription="@string/ui_reset_to_defaults" android:id="@+id/btnResetPickerMaxHeight" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_restore" android:layout_marginEnd="8dp" android:background="?attr/selectableItemBackground" android:padding="2dp" app:tint="?attr/colorPrimary" />
+                        <TextView android:id="@+id/tvPickerMaxHeightValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/literal_450dp" android:textColor="?attr/colorPrimary" android:textSize="12sp" android:textStyle="bold" />
+                    </LinearLayout>
+                    <com.imi.smartedge.sidebar.panel.DefaultMarkerSlider style="@style/Widget.App.Slider"
+                        android:id="@+id/sbPickerMaxHeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:valueFrom="300.0" android:valueTo="800.0" android:value="450.0" app:tickVisible="false" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

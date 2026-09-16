@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="panel_column_count">
+        <item quantity="one">%d columna</item>
+        <item quantity="many">%d columnas</item>
+        <item quantity="other">%d columnas</item>
+    </plurals>
+    <plurals name="selected_app_count">
+        <item quantity="one">%d aplicación seleccionada</item>
+        <item quantity="many">%d aplicaciones seleccionadas</item>
+        <item quantity="other">%d aplicaciones seleccionadas</item>
+    </plurals>
+</resources>

@@ -1,0 +1,227 @@
+package com.imi.smartedge.sidebar.panel
+
+import android.accessibilityservice.AccessibilityService
+import android.content.Intent
+import android.view.accessibility.AccessibilityEvent
+import android.util.Log
+
+class PanelAccessibilityService : AccessibilityService() {
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
+    private lateinit var panelPrefs: PanelPreferences
+    private var lastImmersiveState = false
+    private var lastPackageName: String? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        panelPrefs = PanelPreferences(this)
+    }
+
+    private fun checkImmersiveMode() {
+        if (!panelPrefs.serviceEnabled) return
+        val root = rootInActiveWindow ?: return
+        
+        // Strategy: Check if the main window covers the whole screen area
+        // and doesn't have system bars visible. Since we can't directly check system bar visibility
+        // easily from here, we look at the window bounds vs screen bounds.
+        
+        val displayMetrics = resources.displayMetrics
+        val screenRect = android.graphics.Rect(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+        
+        val windowRect = android.graphics.Rect()
+        root.getBoundsInScreen(windowRect)
+        
+        // Many immersive apps (videos/games) have bounds that match screen closely.
+        // We use a small tolerance (5%) to account for notches, display cutouts, 
+        // or system-level padding that might report a slightly smaller root window.
+        val isImmersive = windowRect.width() >= screenRect.width() * 0.95 && 
+                         windowRect.height() >= screenRect.height() * 0.95
+        
+        if (isImmersive != lastImmersiveState) {
+            lastImmersiveState = isImmersive
+            val intent = Intent(this, FloatingPanelService::class.java).apply {
+                action = FloatingPanelService.ACTION_UPDATE_IMMERSIVE
+                putExtra("is_immersive", isImmersive)
+            }
+            startService(intent)
+        }
+    }
+
+    companion object {
+        private const val TAG = "PanelAccessibility"
+        const val ACTION_TAKE_SCREENSHOT = BuildConfig.APPLICATION_ID + ".ACTION_TAKE_SCREENSHOT"
+        const val ACTION_SHOW_POWER_MENU = BuildConfig.APPLICATION_ID + ".ACTION_SHOW_POWER_MENU"
+        const val ACTION_SPLIT_SCREEN = BuildConfig.APPLICATION_ID + ".ACTION_SPLIT_SCREEN"
+        const val ACTION_TRIGGER_SHORTCUT = BuildConfig.APPLICATION_ID + ".ACTION_TRIGGER_SHORTCUT"
+        const val ACTION_ONE_HANDED = BuildConfig.APPLICATION_ID + ".ACTION_ONE_HANDED"
+        const val ACTION_PREVIOUS_APP = BuildConfig.APPLICATION_ID + ".ACTION_PREVIOUS_APP"
+        const val ACTION_BACK = BuildConfig.APPLICATION_ID + ".ACTION_BACK"
+        const val ACTION_HOME = BuildConfig.APPLICATION_ID + ".ACTION_HOME"
+        const val ACTION_RECENTS = BuildConfig.APPLICATION_ID + ".ACTION_RECENTS"
+        const val ACTION_NOTIFICATIONS = BuildConfig.APPLICATION_ID + ".ACTION_NOTIFICATIONS"
+        const val ACTION_QUICK_SETTINGS = BuildConfig.APPLICATION_ID + ".ACTION_QUICK_SETTINGS"
+        const val ACTION_LOCK_SCREEN = BuildConfig.APPLICATION_ID + ".ACTION_LOCK_SCREEN"
+        
+        const val EXTRA_PKG = "pkg"
+        const val EXTRA_MODE = "mode"
+        
+        @Volatile
+        var isRunning = false
+            private set
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        isRunning = true
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_TAKE_SCREENSHOT -> {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT)
+                }
+            }
+            ACTION_SHOW_POWER_MENU -> {
+                performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+            }
+            ACTION_SPLIT_SCREEN -> {
+                val pkg = intent.getStringExtra(EXTRA_PKG)
+                val mode = intent.getIntExtra(EXTRA_MODE, 1)
+                if (pkg != null) {
+                    if (mode == SplitScreenHelper.MODE_TOP || mode == SplitScreenHelper.MODE_BOTTOM) {
+                        triggerSplitScreen(pkg, mode)
+                    } else {
+                        // Freeform launch doesn't need the toggle action
+                        SplitScreenHelper.launchApp(this, pkg, mode)
+                    }
+                }
+            }
+            ACTION_ONE_HANDED -> {
+                val handler = android.os.Handler(android.os.Looper.getMainLooper())
+                handler.post {
+                    android.widget.Toast.makeText(this, getString(R.string.one_handed_triggered), android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+            ACTION_PREVIOUS_APP -> {
+                performGlobalAction(GLOBAL_ACTION_RECENTS)
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    performGlobalAction(GLOBAL_ACTION_RECENTS)
+                }, 200)
+            }
+            ACTION_BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
+            ACTION_HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
+            ACTION_RECENTS -> performGlobalAction(GLOBAL_ACTION_RECENTS)
+            ACTION_NOTIFICATIONS -> performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
+            ACTION_QUICK_SETTINGS -> performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+            ACTION_LOCK_SCREEN -> {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
+                }
+            }
+            ACTION_TRIGGER_SHORTCUT -> {
+                val shortcut = intent.getStringExtra("shortcut")
+                if (shortcut == "smartedge.shortcut.one_hand") {
+                    val handler = android.os.Handler(android.os.Looper.getMainLooper())
+                    handler.post {
+                        android.widget.Toast.makeText(this, getString(R.string.one_handed_triggered), android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                    // Attempting standard fallback if the OEM supports it via AccessibilityService
+                    // true specific one-handed mode intents are heavily fragmented
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                        // In Android 12+, there's no public GLOBAL_ACTION_ONE_HANDED.
+                        // We rely on standard gesture dispatch or root if really necessary.
+                    }
+                }
+            }
+        }
+        return START_NOT_STICKY
+    }
+
+    /**
+     * Triggers split-screen for the given package and mode.
+     *
+     * Strategy 1 (AOSP): Use GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN to pin the foreground app,
+     *   then launch the second app adjacent to it.
+     * Strategy 2 (Origin OS / Vivo / OEMs that block the toggle): Skip the toggle and
+     *   launch the second app directly with split-screen windowing mode flags. The OEM's
+     *   own window manager handles placing it in split.
+     */
+    private fun triggerSplitScreen(pkg: String, mode: Int) {
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val isVivo = VivoUtils.isVivo()
+
+        if (isVivo) {
+            SplitScreenHelper.launchApp(this, pkg, mode)
+        } else {
+            // Standard AOSP path: toggle split, wait for animation, then launch second app
+            val toggled = performGlobalAction(GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN)
+
+            // On many AOSP/Pixel versions, we need a significant delay for the system to dock the first app.
+            // If toggle failed (e.g. only one app open), we still try to launch adjacent.
+            val delay = if (toggled) 1000L else 500L
+            handler.postDelayed({
+                SplitScreenHelper.launchApp(this, pkg, mode)
+            }, delay)
+        }
+    }
+
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event == null) return
+        
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            val packageName = event.packageName?.toString() ?: return
+            if (packageName == lastPackageName) return
+            lastPackageName = packageName
+
+            val className = event.className?.toString() ?: ""
+            
+            // Store current foreground package for Context/Game mode
+            panelPrefs.currentForegroundPackage = packageName
+            
+            // Get the current active keyboard package
+            val defaultIme = android.provider.Settings.Secure.getString(
+                contentResolver,
+                android.provider.Settings.Secure.DEFAULT_INPUT_METHOD
+            )
+            val imePackage = defaultIme?.substringBefore("/") ?: ""
+            
+            val isSystemPkg = packageName == "android" || packageName == "com.android.systemui"
+            
+            if (packageName != this.packageName && packageName != imePackage && !isSystemPkg) {
+                if (panelPrefs.serviceEnabled) {
+                    val closeIntent = Intent(this, FloatingPanelService::class.java).apply {
+                        action = FloatingPanelService.ACTION_CLOSE_PANEL
+                    }
+                    startService(closeIntent)
+
+                    // Notify service to update game mode state based on new foreground package
+                    val refreshIntent = Intent(this, FloatingPanelService::class.java).apply {
+                        action = FloatingPanelService.ACTION_REFRESH
+                    }
+                    startService(refreshIntent)
+                }
+            }
+        }
+        
+        // Check for immersive mode on window content changes too, as bounds might change
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || 
+            event.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+            checkImmersiveMode()
+        }
+    }
+
+    override fun onInterrupt() {}
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        isRunning = false
+        val stopIntent = Intent(this, FloatingPanelService::class.java).apply {
+            action = FloatingPanelService.ACTION_STOP
+        }
+        startService(stopIntent)
+        return super.onUnbind(intent)
+    }
+}

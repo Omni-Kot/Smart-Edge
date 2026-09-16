@@ -1,0 +1,12 @@
+- Added advanced gesture actions: Back, Home, Recents, Notifications, Quick Settings, Lock Screen, Power Menu.
+- Added fully configurable multi-tap gestures (single, double, and triple tap).
+- Added ability to manually select specific apps to hide the sidebar in.
+- Added a dedicated tools folder and navigation system.
+- Fixed stuck drag shadow in freeform/drag-to-split operations.
+- Resolved glitchy app sorting and reordering in the sidebar.
+- Prevented unintended service restarts when disabled.
+- Updated default settings (enabled Dashboard/Tools by default).
+- Added WebMoney (WMZ) donation option to the Support screen.
+- Fixed blank clickable icons issue by disabling problematic RecyclerView optimizations.
+- Implemented high-definition, super-sampled icon rendering for perfectly smooth shapes.
+- Improved real-time settings refresh using a global appearance tracking key.
